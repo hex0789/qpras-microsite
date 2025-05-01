@@ -3,7 +3,7 @@
 
 from ada_hyperdonor_interface import ADAHyperdonorInterface
 from nudge_scheduler import NudgeScheduler
-from engine.influence_tracker import InfluenceTracker
+from influence_tracker import InfluenceTracker
 
 
 class ADAEngine:
