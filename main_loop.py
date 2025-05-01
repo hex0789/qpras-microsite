@@ -2,7 +2,7 @@
 # main_loop.py – Live QPRAS-ADA Deployment Loop (Active Experiment Mode)
 
 import time
-from engine.ada_neural_core import ADAEngine
+from ada_neural_core import ADAEngine
 
 def run_nudge_loop(target_goal=100_000_000_000, interval_minutes=10):
     ada = ADAEngine()
@@ -25,7 +25,7 @@ def run_nudge_loop(target_goal=100_000_000_000, interval_minutes=10):
             # Example: parse PayPal webhook, email replies, contact form logs
             # Here: simulate feedback
             ada.log_external_event("Microsite", "Contact", "Simulated inquiry after nudge exposure.")
-            ada.log_external_event("PayPal", "Donation", "Simulated $10,000 donation after follow-up.")
+            #ada.log_external_event("PayPal", "Donation", "Simulated $10,000 donation after follow-up.")
 
             # Sum actual high-probability projected donations
             summary = ada.get_potential_funding_summary()

@@ -1,31 +1,25 @@
-
 from flask import Flask, request, jsonify
 from ada_neural_core import ADAEngine
 
 app = Flask(__name__)
 ada = ADAEngine()
 
-@app.route('/webhook/donation', methods=['POST'])
+@app.route("/webhook/donation", methods=["POST"])
 def handle_donation():
-    data = request.json
-    amount = data.get('amount')
-    donor = data.get('donor', 'Anonymous')
-    detail = f"Live donation of ${amount} from {donor}"
-    ada.log_external_event("PayPal", "Donation", detail)
-    return jsonify({"status": "logged", "detail": detail}), 200
+    try:
+        payload = request.json
+        resource = payload.get("resource", {})
 
-@app.route('/webhook/contact', methods=['POST'])
-def handle_contact():
-    data = request.json
-    name = data.get('name', 'Unknown')
-    message = data.get('message')
-    detail = f"Message from {name}: {message}"
-    ada.log_external_event("Microsite", "Contact", detail)
-    return jsonify({"status": "logged", "detail": detail}), 200
+        amount = float(resource.get("amount", {}).get("value", 0.0))
+        currency = resource.get("amount", {}).get("currency_code", "USD")
+        payer = resource.get("payer", {}).get("email_address", "Anonymous")
+        txn_id = resource.get("id", "N/A")
 
-@app.route('/')
-def index():
-    return "QPRAS-ADA Webhook Listener Active", 200
+        log_message = f"{payer} donated {amount:.2f} {currency} (TXN: {txn_id})"
+        ada.log_external_event("PayPal", "Donation", log_message)
 
-if __name__ == "__main__":
-    app.run(port=5001)
+        return jsonify({"status": "success", "message": log_message}), 200
+
+    except Exception as e:
+        ada.log_external_event("PayPal", "WebhookError", f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 400
