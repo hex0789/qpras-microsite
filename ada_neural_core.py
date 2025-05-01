@@ -1,7 +1,7 @@
 
 # --- ADA Hyperdonor Integration ---
 
-from engine.ada_hyperdonor_interface import ADAHyperdonorInterface
+from ada_hyperdonor_interface import ADAHyperdonorInterface
 from engine.nudge_scheduler import NudgeScheduler
 from engine.influence_tracker import InfluenceTracker
 

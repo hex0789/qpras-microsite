@@ -1,6 +1,6 @@
 
 from flask import Flask, request, jsonify
-from engine.ada_neural_core import ADAEngine
+from ada_neural_core import ADAEngine
 
 app = Flask(__name__)
 ada = ADAEngine()
