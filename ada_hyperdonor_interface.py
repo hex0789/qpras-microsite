@@ -1,6 +1,6 @@
 
 import pandas as pd
-from engine.qpras_hyperdonor_module import simulate_hyperdonor_campaign
+from qpras_hyperdonor_module import simulate_hyperdonor_campaign
 
 class ADAHyperdonorInterface:
     def __init__(self, threshold=0.85):
