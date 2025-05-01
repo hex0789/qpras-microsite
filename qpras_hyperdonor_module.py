@@ -1,6 +1,7 @@
 import random
 from datetime import datetime, timedelta
 import pandas as pd
+from qpras_hyperdonor_module import simulate_hyperdonor_campaign
 
 # Define high-net-worth individuals and their basic profiles
 HNWI_LIST = [
