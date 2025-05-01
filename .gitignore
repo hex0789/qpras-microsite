@@ -1,0 +1,27 @@
+
+# Node modules (if later frontend tools are used)
+node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Python cache (if ADA scripts are integrated)
+__pycache__/
+*.pyc
+
+# Log files and temporary data
+*.log
+*.tmp
+
+# IDE/editor config files
+.vscode/
+.idea/
+
+# Backup files
+*~
+*.bak
+
+# System files
+ehthumbs.db
+desktop.ini
