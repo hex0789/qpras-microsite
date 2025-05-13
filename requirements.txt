@@ -1,5 +1,16 @@
 flask
 pandas
-paypalrestsdk>=1.13.3
+scikit-learn
 tensorflow
 transformers
+paypalrestsdk
+numpy
+python-dateutil
+pytz
+tzdata
+six
+MarkupSafe
+itsdangerous
+click
+blinker
+Werkzeug
