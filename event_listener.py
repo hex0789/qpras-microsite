@@ -1,8 +1,17 @@
 from flask import Flask, request, jsonify
+import os
 from ada_neural_core import ADAEngine
 
 app = Flask(__name__)
 ada = ADAEngine()
+
+# Root endpoint to confirm service is active
+@app.route("/")
+def home():
+    return jsonify({
+        "status": "success",
+        "message": "QPRAS-ADA Webhook is live and accepting PayPal POST requests at /webhook/donation"
+    })
 
 @app.route("/webhook/donation", methods=["POST"])
 def handle_donation():
@@ -18,12 +27,16 @@ def handle_donation():
         log_message = f"{payer} donated {amount:.2f} {currency} (TXN: {txn_id})"
         ada.log_external_event("PayPal", "Donation", log_message)
 
+        nudge_message = "Thank you for supporting ethical influence. Your contribution is shaping a new era of thought."
+        ada.deploy_nudge("donation", nudge_message)
+
         return jsonify({"status": "success", "message": log_message}), 200
 
     except Exception as e:
-        ada.log_external_event("PayPal", "WebhookError", f"Error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 400
+        error_message = f"Error: {str(e)}"
+        ada.log_external_event("PayPal", "WebhookError", error_message)
+        return jsonify({"status": "error", "message": error_message}), 400
 
-# 🧠 Required block to run the Flask server
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=True, host="0.0.0.0", port=port)
