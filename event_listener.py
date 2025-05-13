@@ -1,42 +1,46 @@
-from flask import Flask, request, jsonify
 import os
-from ada_neural_core import ADAEngine
+import json
+from flask import Flask, request, jsonify
+from paypalrestsdk import WebhookEvent
 
+# Flask app setup
 app = Flask(__name__)
+
+# Your previous logic imports
+from ada_neural_core import ADAEngine
+from ada_hyperdonor_interface import ADAHyperdonorInterface
+
+# Initialize the ADAEngine
 ada = ADAEngine()
 
-# Root endpoint to confirm service is active
-@app.route("/")
-def home():
-    return jsonify({
-        "status": "success",
-        "message": "QPRAS-ADA Webhook is live and accepting PayPal POST requests at /webhook/donation"
-    })
+# Webhook route for PayPal notifications
+@app.route('/webhook', methods=['POST'])
+def paypal_webhook():
+    payload = request.get_data(as_text=True)
+    sig_header = request.headers.get('Paypal-Transmission-Sig')
+    webhook_id = "6T150257H83796942"
+    # Use the correct PayPal API to verify the event
+    if WebhookEvent.verify(webhook_id, sig_header, payload):
+        event = json.loads(payload)
 
-@app.route("/webhook/donation", methods=["POST"])
-def handle_donation():
-    try:
-        payload = request.json
-        resource = payload.get("resource", {})
+        # Ensure the event type is what you are interested in
+        if event['event_type'] == 'PAYMENT.SALE.COMPLETED':
+            donation_data = event['resource']
+            donor_name = donation_data['payer']['payer_info']['first_name']
+            amount_donated = donation_data['amount']['total']
+            
+            print(f"Donation received from {donor_name} for ${amount_donated}")
 
-        amount = float(resource.get("amount", {}).get("value", 0.0))
-        currency = resource.get("amount", {}).get("currency_code", "USD")
-        payer = resource.get("payer", {}).get("email_address", "Anonymous")
-        txn_id = resource.get("id", "N/A")
+            # Here you update the system with the real donation information
+            ada.update_donations(donor_name, amount_donated)
+            
+            return jsonify({'status': 'success'}), 200
+    return jsonify({'status': 'failure'}), 400
 
-        log_message = f"{payer} donated {amount:.2f} {currency} (TXN: {txn_id})"
-        ada.log_external_event("PayPal", "Donation", log_message)
+# Method to update real donations
+def update_donations(donor_name, amount_donated):
+    # Update your model with the donation
+    ada.add_donation(donor_name, amount_donated)
 
-        nudge_message = "Thank you for supporting ethical influence. Your contribution is shaping a new era of thought."
-        ada.deploy_nudge("donation", nudge_message)
-
-        return jsonify({"status": "success", "message": log_message}), 200
-
-    except Exception as e:
-        error_message = f"Error: {str(e)}"
-        ada.log_external_event("PayPal", "WebhookError", error_message)
-        return jsonify({"status": "error", "message": error_message}), 400
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+if __name__ == '__main__':
+    app.run(debug=True)

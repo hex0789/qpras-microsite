@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "HEX Quantum-AI Reality Influence Simulation", "HEX Quantum-AI Reality Influence Simulation\HEX Quantum-AI Reality Influence Simulation.pyproj", "{F74755BC-F044-4DE8-A98A-390CCD739198}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F74755BC-F044-4DE8-A98A-390CCD739198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F74755BC-F044-4DE8-A98A-390CCD739198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1171B8E8-612F-486A-9BE9-EF0EDCD85474}
+	EndGlobalSection
+EndGlobal

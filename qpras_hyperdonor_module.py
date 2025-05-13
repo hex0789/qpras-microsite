@@ -44,7 +44,15 @@ def simulate_hyperdonor_campaign():
     profiles = [generate_influence_profile(h) for h in HNWI_LIST]
     reinforced = reinforce_profiles(profiles)
     df = pd.DataFrame(reinforced)
+    
+    # Sum the total donations of those with a probability of success higher than 0.85
     total_donations = sum(p["predicted_donation"] for p in reinforced if p["probability_of_success"] > 0.85)
+    
+    # Adding more context for the user:
+    print("Hyperdonor Campaign Simulation Results:")
+    print(df[["name", "predicted_donation", "probability_of_success"]])
+    print(f"Total Donations (with >85% probability): ${total_donations:,.2f}")
+
     return df, total_donations
 
 if __name__ == "__main__":
@@ -52,4 +60,3 @@ if __name__ == "__main__":
     print("Projected Donations Over 85% Confidence Threshold:")
     print(df[df['probability_of_success'] > 0.85][['name', 'predicted_donation', 'probability_of_success']])
     print(f"Total Projected Donations: ${total:,.2f}")
-

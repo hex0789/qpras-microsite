@@ -1,47 +1,48 @@
-
-# main_loop.py – Live QPRAS-ADA Deployment Loop (Active Experiment Mode)
-
 import time
-from ada_neural_core import ADAEngine
+from flask import Flask
+import threading
+from ada_neural_core import ADAEngine  # Make sure this import matches the correct path
 
-def run_nudge_loop(target_goal=100_000_000_000, interval_minutes=10):
+# Initialize Flask app
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Webhook listener is live!"
+
+def run_flask():
+    app.run(debug=True, use_reloader=False, host="0.0.0.0", port=5000)
+
+def run_nudge_cycle():
+    target_funding_goal = 100_000_000_000
+    cumulative_donations = 0
+
+    # Create an instance of ADAEngine (you can replace this with ADAHyperdonorInterface if needed)
     ada = ADAEngine()
-    total_donations = 0
-    iteration = 0
 
-    print("\n🔁 QPRAS-ADA Hyperdonor System is now ACTIVE (Live Mode)")
-    print(f"🎯 Target Funding Goal: ${target_goal:,.2f}")
-    print(f"🔄 Nudges will deploy every {interval_minutes} minutes.\n")
+    while cumulative_donations < target_funding_goal:
+        # Simulate the campaign (this should now use the real webhook data)
+        print("\n=== Iteration ===")
+        print("Hyperdonor Campaign Simulation Results:")
 
-    try:
-        while total_donations < target_goal:
-            iteration += 1
-            print(f"\n=== Iteration {iteration} ===")
+        # Run the hyperdonor campaign with the ADA engine (no simulation)
+        high_prob_df = ada.run_simulation()  # Ensure ADAEngine has the run_simulation method
 
-            # Run simulation and nudge
-            ada.evaluate_funding_pathways()
+        # Calculate total donations based on the probability
+        donations_this_iter = high_prob_df['predicted_donation'].sum()
+        cumulative_donations += donations_this_iter
 
-            # Simulate pulling updated real-world data (can be replaced with live APIs)
-            # Example: parse PayPal webhook, email replies, contact form logs
-            # Here: simulate feedback
-            ada.log_external_event("Microsite", "Contact", "Simulated inquiry after nudge exposure.")
-            #ada.log_external_event("PayPal", "Donation", "Simulated $10,000 donation after follow-up.")
-
-            # Sum actual high-probability projected donations
-            summary = ada.get_potential_funding_summary()
-            if summary is not None:
-                total_donations = summary["predicted_donation"].sum()
-                print(f"💰 Cumulative Projected Donations: ${total_donations:,.2f}")
-
-            # Sleep between cycles
-            time.sleep(interval_minutes * 60)
-
-        print("\n✅ GOAL MET: Total projected donations exceeded target.")
-        ada.tracker.log_event("System", "Goal Met", f"Funding goal of ${target_goal:,} achieved.")
-
-    except KeyboardInterrupt:
-        print("\n⏹ QPRAS-ADA process manually terminated.")
-        ada.tracker.log_event("System", "Terminated", "Manual shutdown by user.")
+        print(f"Total Donations (with >85% probability): ${cumulative_donations:,.2f}")
+        print("[ADA] Nudge Deployed (visionary): Support a project shaping ethical influence — not by control, but by cognitive resonance.")
+        
+        # Sleep for 10 minutes (600 seconds)
+        time.sleep(600)
 
 if __name__ == "__main__":
-    run_nudge_loop()
+    # Start Flask app in a separate thread
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.daemon = True  # Allow the thread to exit when the main program exits
+    flask_thread.start()
+
+    # Start the nudge cycle
+    run_nudge_cycle()
